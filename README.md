@@ -20,11 +20,11 @@ cd wardrobe-iot
   python3 -m venv venv
 source venv/bin/activate
 ```
-3. Install dependecies:
+3. Install dependecies: 
 ```bash
-   pip install -r requirements.txt //todo
+   pip install -r requirements.txt 
 ```
-4. **Execute principal service**:
+4. **Execute principal service**: 
 ```bash
-   //TODO
+   
 ```
