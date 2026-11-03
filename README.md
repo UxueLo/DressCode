@@ -1,4 +1,4 @@
-# DressCode
+# DressCode [In Progress]
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![Status](https://img.shields.io/badge/Status-In%20Development-orange.svg)](#)
