@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 # -----------------------------------------------------------------------------
-# 1. FUNCIÓN TRABAJADORA
+# 1. FUNCION TRABAJADORA
 # -----------------------------------------------------------------------------
 
 def segundos_hasta_medianoche() -> float:

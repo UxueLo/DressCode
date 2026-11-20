@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 # -----------------------------------------------------------------------------
-# 1. FUNCIÓN TRABAJADORA (nivel superior del módulo, argumentos serializables)
+# 1. FUNCION TRABAJADORA (nivel superior del modulo, argumentos serializables)
 # -----------------------------------------------------------------------------
 
 def procesar_prenda(gemini: GeminiService, db: ArmarioDB, tag_id: str, image_path: str) -> Prenda:
@@ -24,8 +24,8 @@ def procesar_prenda(gemini: GeminiService, db: ArmarioDB, tag_id: str, image_pat
 
 def trabajador(cola_tareas: Queue, cola_resultados: Queue) -> None:
     """Consumidor con centinela: procesa tareas hasta recibir None."""
-    # Se crean aquí, dentro del proceso hijo: el cliente de Gemini no se
-    # comparte entre procesos y SQLite abre una conexión por operación.
+    # Se crean aqui, dentro del proceso hijo: el cliente de Gemini no se
+    # comparte entre procesos y SQLite abre una conexion por operacion
     gemini = GeminiService()
     db = ArmarioDB()
 
