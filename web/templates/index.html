@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DressCode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="top">
+    <h1 class="logo">DressCode</h1>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="hoy" aria-selected="true">Hoy</button>
+      <button role="tab" data-tab="armario" aria-selected="false">Armario</button>
+      <button role="tab" data-tab="gustos" aria-selected="false">Gustos</button>
+    </nav>
+    <p id="estado" class="estado" aria-live="polite"></p>
+  </header>
+
+  <main>
+    <!-- ============================================================ HOY -->
+    <section id="tab-hoy" class="panel">
+      <form id="form-generar" class="barra">
+        <label>Ciudad <input id="ciudad" name="ciudad" autocomplete="off"></label>
+        <label>Fecha <input id="fecha" name="fecha" type="date"></label>
+        <label>Evento
+          <select id="evento" name="evento"><option value="">Sin evento concreto</option></select>
+        </label>
+        <label>Prenda ancla
+          <select id="ancla" name="ancla"><option value="">Que elija DressCode</option></select>
+        </label>
+        <label>Temperatura manual (°C)
+          <input id="temperatura" name="temperatura" type="number" step="0.5" placeholder="usar previsión">
+        </label>
+        <button class="primario" type="submit">Generar outfits</button>
+      </form>
+      <p id="clima" class="clima" hidden></p>
+      <ul id="notas" class="notas"></ul>
+      <div id="outfits" class="outfits"></div>
+      <h2 class="sub">Historial reciente</h2>
+      <div id="historial" class="historial"></div>
+    </section>
+
+    <!-- ======================================================== ARMARIO -->
+    <section id="tab-armario" class="panel" hidden>
+      <form id="form-subir" class="barra">
+        <label>Foto de la prenda <input id="foto" name="foto" type="file" accept="image/*" required></label>
+        <label>Etiqueta NFC (opcional) <input id="tag_id" name="tag_id" placeholder="p. ej. 04A3B2C1"></label>
+        <button class="primario" type="submit">Añadir prenda</button>
+        <button type="button" id="reindexar" class="secundario" hidden>Reindexar estilo</button>
+      </form>
+      <p class="ayuda">Gemini analiza la foto (categoría, color, formalidad, rango de temperatura…) y FashionCLIP guarda su vector de estilo.</p>
+      <div id="armario" class="grid"></div>
+    </section>
+
+    <!-- ========================================================= GUSTOS -->
+    <section id="tab-gustos" class="panel" hidden>
+      <p id="perfil" class="perfil"></p>
+      <div class="mazo" id="mazo" tabindex="0" aria-label="Fotos para valorar"></div>
+      <div class="acciones">
+        <button id="btn-no" class="redondo no" aria-label="No me gusta">✕</button>
+        <button id="btn-undo" class="redondo deshacer" aria-label="Deshacer">↶</button>
+        <button id="btn-si" class="redondo si" aria-label="Me gusta">♥</button>
+      </div>
+      <p class="ayuda centro">Arrastra la foto a la derecha (me gusta) o a la izquierda (no), o usa las flechas del teclado.</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
