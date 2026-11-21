@@ -203,12 +203,36 @@ function tarjetaPrenda(p) {
           onclick: async () => { if (confirm(`¿Borrar «${p.nombre}»?`)) { await api(`/api/prendas/${encodeURIComponent(p.tag_id)}`, { method: "DELETE" }); cargarArmario(); cargarEstado(); } } }))));
 }
 
+// Reduce la foto en el navegador antes de subirla: las fotos de cámara pesan varios MB y la subida
+// era parte de la espera (y a veces superaba el límite del servidor). El canvas también aplica la
+// orientación EXIF y convierte WEBP/AVIF/HEIC (lo que el navegador sepa abrir) a JPEG.
+// Si el navegador no puede abrirla, se envía el original y el servidor decide.
+async function reducirFoto(archivo, lado = 1024) {
+  try {
+    const bmp = await createImageBitmap(archivo, { imageOrientation: "from-image" });
+    const k = Math.min(1, lado / Math.max(bmp.width, bmp.height));
+    const lienzo = document.createElement("canvas");
+    lienzo.width = Math.round(bmp.width * k);
+    lienzo.height = Math.round(bmp.height * k);
+    const ctx = lienzo.getContext("2d");
+    ctx.fillStyle = "#fff";                       // PNG/WEBP con transparencia -> fondo blanco, no negro
+    ctx.fillRect(0, 0, lienzo.width, lienzo.height);
+    ctx.drawImage(bmp, 0, 0, lienzo.width, lienzo.height);
+    bmp.close();
+    const blob = await new Promise((ok) => lienzo.toBlob(ok, "image/jpeg", 0.88));
+    return blob && blob.size < archivo.size ? blob : archivo;
+  } catch { return archivo; }
+}
+
 $("#form-subir").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const btn = ev.submitter;
   btn.disabled = true;
   try {
-    await api("/api/prendas", { method: "POST", body: new FormData(ev.target) });
+    const datos = new FormData(ev.target);
+    const foto = datos.get("foto");
+    if (foto && foto.size) datos.set("foto", await reducirFoto(foto), "prenda.jpg");   // sube ~200 KB en vez de 5-10 MB
+    await api("/api/prendas", { method: "POST", body: datos });
     ev.target.reset();
     toast("Foto enviada: Gemini la está analizando");
     cargarArmario();

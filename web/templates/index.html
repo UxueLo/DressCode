@@ -2,68 +2,118 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DressCode</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2b4c7e">
+  <title>DressCode · Tu armario inteligente</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232b4c7e'/%3E%3Cpath d='M12 14h18c13 0 22 8 22 18S43 50 30 50H12z' fill='none' stroke='%23d99a2b' stroke-width='3' stroke-dasharray='6 5' transform='translate(2 0)'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <header class="top">
-    <h1 class="logo">DressCode</h1>
-    <nav class="tabs" role="tablist">
-      <button role="tab" data-tab="hoy" aria-selected="true">Hoy</button>
-      <button role="tab" data-tab="armario" aria-selected="false">Armario</button>
-      <button role="tab" data-tab="gustos" aria-selected="false">Gustos</button>
-    </nav>
-    <p id="estado" class="estado" aria-live="polite"></p>
+    <div class="top-in">
+      <h1 class="logo">DressCode</h1>
+      <nav class="tabs" role="tablist" aria-label="Secciones">
+        <button role="tab" id="t-hoy" data-tab="hoy" aria-selected="true" aria-controls="tab-hoy">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <span>Hoy</span>
+        </button>
+        <button role="tab" id="t-armario" data-tab="armario" aria-selected="false" aria-controls="tab-armario">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
+          <span>Armario</span>
+        </button>
+        <button role="tab" id="t-gustos" data-tab="gustos" aria-selected="false" aria-controls="tab-gustos">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/></svg>
+          <span>Gustos</span>
+        </button>
+      </nav>
+      <p id="estado" class="estado" aria-live="polite"></p>
+    </div>
   </header>
 
   <main>
     <!-- ============================================================ HOY -->
-    <section id="tab-hoy" class="panel">
-      <form id="form-generar" class="barra">
-        <label>Ciudad <input id="ciudad" name="ciudad" autocomplete="off"></label>
-        <label>Fecha <input id="fecha" name="fecha" type="date"></label>
-        <label>Evento
-          <select id="evento" name="evento"><option value="">Sin evento concreto</option></select>
-        </label>
-        <label>Prenda ancla
-          <select id="ancla" name="ancla"><option value="">Que elija DressCode</option></select>
-        </label>
-        <label>Temperatura manual (°C)
-          <input id="temperatura" name="temperatura" type="number" step="0.5" placeholder="usar previsión">
-        </label>
-        <button class="primario" type="submit">Generar outfits</button>
+    <section id="tab-hoy" class="panel" role="tabpanel" aria-labelledby="t-hoy">
+      <div class="cabecera">
+        <h2>Tu outfit de hoy</h2>
+        <p>Dinos dónde y cuándo, y DressCode combina lo que tienes en el armario según el tiempo y tus gustos.</p>
+      </div>
+
+      <form id="form-generar" class="caja">
+        <div class="campos">
+          <label><span class="et">Ciudad</span><input id="ciudad" name="ciudad" autocomplete="off"></label>
+          <label><span class="et">Fecha</span><input id="fecha" name="fecha" type="date"></label>
+          <label><span class="et">Evento</span>
+            <select id="evento" name="evento"><option value="">Sin evento concreto</option></select>
+          </label>
+        </div>
+        <details class="mas">
+          <summary>Más opciones: prenda ancla y temperatura manual</summary>
+          <div class="campos">
+            <label><span class="et">Prenda ancla</span>
+              <select id="ancla" name="ancla"><option value="">Que elija DressCode</option></select>
+              <small class="pista">El outfit se construye alrededor de esta prenda.</small>
+            </label>
+            <label><span class="et">Temperatura manual (°C)</span>
+              <input id="temperatura" name="temperatura" type="number" step="0.5" placeholder="usar previsión">
+              <small class="pista">Útil si no hay conexión o quieres probar otro clima.</small>
+            </label>
+          </div>
+        </details>
+        <div class="fila-acc"><button class="primario" type="submit">Generar outfits</button></div>
       </form>
+
       <p id="clima" class="clima" hidden></p>
       <ul id="notas" class="notas"></ul>
       <div id="outfits" class="outfits"></div>
+
       <h2 class="sub">Historial reciente</h2>
       <div id="historial" class="historial"></div>
     </section>
 
     <!-- ======================================================== ARMARIO -->
-    <section id="tab-armario" class="panel" hidden>
-      <form id="form-subir" class="barra">
-        <label>Foto de la prenda <input id="foto" name="foto" type="file" accept="image/*" required></label>
-        <label>Etiqueta NFC (opcional) <input id="tag_id" name="tag_id" placeholder="p. ej. 04A3B2C1"></label>
-        <button class="primario" type="submit">Añadir prenda</button>
-        <button type="button" id="reindexar" class="secundario" hidden>Reindexar estilo</button>
+    <section id="tab-armario" class="panel" role="tabpanel" aria-labelledby="t-armario" hidden>
+      <div class="cabecera">
+        <h2>Tu armario</h2>
+        <p>Añade una prenda con una foto. DressCode detecta el tipo, el color, la formalidad y con qué temperatura se puede llevar.</p>
+      </div>
+
+      <form id="form-subir" class="caja">
+        <label class="soltar">
+          <span class="soltar-t">Foto de la prenda</span>
+          <span class="soltar-s">Elige una imagen de tu galería o haz una foto con la cámara. Mejor una sola prenda, con buena luz y fondo liso.</span>
+          <input id="foto" name="foto" type="file" accept="image/*" required>
+        </label>
+        <details class="mas">
+          <summary>Etiqueta NFC (opcional)</summary>
+          <div class="campos">
+            <label><span class="et">Código de la etiqueta</span><input id="tag_id" name="tag_id" placeholder="p. ej. 04A3B2C1" autocomplete="off"></label>
+          </div>
+        </details>
+        <div class="fila-acc">
+          <button class="primario" type="submit">Añadir prenda</button>
+          <button type="button" id="reindexar" class="secundario" hidden>Reindexar estilo</button>
+        </div>
       </form>
-      <p class="ayuda">Gemini analiza la foto (categoría, color, formalidad, rango de temperatura…) y FashionCLIP guarda su vector de estilo.</p>
+      <p class="ayuda">El análisis lo hace Gemini y el vector de estilo, FashionCLIP. Tarda unos segundos: la prenda aparecerá aquí en cuanto esté lista.</p>
+
       <div id="armario" class="grid"></div>
     </section>
 
     <!-- ========================================================= GUSTOS -->
-    <section id="tab-gustos" class="panel" hidden>
+    <section id="tab-gustos" class="panel panel-centro" role="tabpanel" aria-labelledby="t-gustos" hidden>
+      <div class="cabecera">
+        <h2>Tus gustos</h2>
+        <p>Valora looks de inspiración. Cuantos más valores, mejor acertarán tus outfits.</p>
+      </div>
       <p id="perfil" class="perfil"></p>
       <div class="mazo" id="mazo" tabindex="0" aria-label="Fotos para valorar"></div>
       <div class="acciones">
-        <button id="btn-no" class="redondo no" aria-label="No me gusta">✕</button>
-        <button id="btn-undo" class="redondo deshacer" aria-label="Deshacer">↶</button>
-        <button id="btn-si" class="redondo si" aria-label="Me gusta">♥</button>
+        <div class="accion"><button id="btn-no" class="redondo no" aria-label="No me gusta">✕</button><span>No</span></div>
+        <div class="accion"><button id="btn-undo" class="redondo deshacer" aria-label="Deshacer">↶</button><span>Deshacer</span></div>
+        <div class="accion"><button id="btn-si" class="redondo si" aria-label="Me gusta">♥</button><span>Me gusta</span></div>
       </div>
       <p class="ayuda centro">Arrastra la foto a la derecha (me gusta) o a la izquierda (no), o usa las flechas del teclado.</p>
     </section>

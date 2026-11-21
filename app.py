@@ -14,7 +14,7 @@ from datetime import date
 from pathlib import Path
 
 from flask import Flask, abort, jsonify, render_template, request, send_from_directory
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageOps, UnidentifiedImageError
 
 import config
 from services.feed_service import FeedError
@@ -36,6 +36,10 @@ def crear_app(db, procesador, planificador, feed) -> Flask:
     app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
     config.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     config.INSPIRATION_DIR.mkdir(parents=True, exist_ok=True)
+
+    @app.errorhandler(413)
+    def demasiado_grande(_e):
+        return _error("La foto pesa demasiado (máx. 15 MB). Prueba con una más pequeña.", 413)
 
     # ------------------------------------------------------------------ páginas
     @app.get("/")
@@ -86,10 +90,10 @@ def crear_app(db, procesador, planificador, feed) -> Flask:
         if not TAG_RE.match(tag_id):
             return _error("tag_id: solo letras, números, '-' y '_' (máx. 40)")
         try:   # se valida y normaliza la foto: JPEG de hasta 1280 px
-            img = Image.open(io.BytesIO(archivo.read())).convert("RGB")
+            img = ImageOps.exif_transpose(Image.open(io.BytesIO(archivo.read()))).convert("RGB")
         except (UnidentifiedImageError, OSError):
-            return _error("El fichero no es una imagen válida")
-        img.thumbnail((1280, 1280))
+            return _error("El fichero no es una imagen válida (prueba con JPG, PNG o WEBP)")
+        img.thumbnail((1280, 1280))   # exif_transpose: las fotos de móvil vienen "giradas" en el EXIF
         ruta = config.UPLOAD_DIR / f"{tag_id}_{uuid.uuid4().hex[:6]}.jpg"
         img.save(ruta, "JPEG", quality=90)
         procesador.enviar(tag_id, str(ruta))   # Gemini + FashionCLIP en el proceso trabajador

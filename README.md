@@ -50,6 +50,18 @@ Se activan con `FEED_SOURCES=local,pinterest,unsplash`. No se hace scraping de P
 
 Aprendizaje continuo: 👍/👎 sobre un outfit generado también actualiza el perfil (peso 1.5×) y "Me lo pongo" lo anota en el historial de novedad.
 
+## Rendimiento y fiabilidad del análisis con Gemini
+
+Qué se hizo para que añadir una prenda sea rápido y no falle en silencio (`services/gemini_service.py`):
+
+- **Sin "thinking"**: `thinking_budget=0` (2.5) / `thinking_level="minimal"` (3.x). Clasificar una prenda no necesita razonar y era lo que más tardaba.
+- **Salida estructurada** (`services/gemini_schema.py`): Gemini devuelve siempre JSON válido y solo con valores del vocabulario.
+- **Foto pequeña**: el navegador la reduce a 1024 px antes de subirla (también corrige orientación y convierte WEBP/AVIF) y a Gemini se le envían 768 px.
+- **Paralelo**: Gemini y FashionCLIP trabajan a la vez, varias prendas se analizan a la vez (`GEMINI_CONCURRENCIA`) y el modelo de embeddings se precarga en segundo plano.
+- **Errores**: timeout (`GEMINI_TIMEOUT`), reintentos solo si es temporal (429/5xx/red) y **modelo de reserva** (`GEMINI_MODEL_FALLBACK`). Los mensajes de error de la web dicen la causa real (cuota, API key, saturación...).
+
+Ajustes en `.env`: `GEMINI_MODEL`, `GEMINI_MODEL_FALLBACK`, `GEMINI_TIMEOUT`, `GEMINI_CONCURRENCIA`, `GEMINI_IMG_LADO`. En el log (`INFO`) aparece cuánto tarda cada llamada a Gemini.
+
 ## Estructura
 
 ```

@@ -4,6 +4,7 @@ pillow>=10.0
 requests>=2.31
 python-dotenv>=1.0
 google-genai>=1.0        # Gemini
+pydantic>=2.0            # esquema de salida estructurada de Gemini
 torch>=2.2               # FashionCLIP
 transformers>=4.40       # FashionCLIP (patrickjohncyh/fashion-clip)
 

@@ -29,7 +29,13 @@ DB_PATH = str(DATA_DIR / "armario.db")
 
 # ----------------------------------------------------------------- servicios
 GEMINI_API_KEY = _env("GEMINI_API_KEY")
-GEMINI_MODEL = _env("GEMINI_MODEL", "gemini-2.5-flash")
+# Los modelos 2.5 ya solo se sirven con prioridad a cuentas que los usaron antes; Google recomienda
+# 3.5 Flash-Lite (rápido y barato, ideal para clasificar una foto) o 3.x Flash para proyectos nuevos.
+GEMINI_MODEL = _env("GEMINI_MODEL", "gemini-3.5-flash-lite")
+GEMINI_MODEL_FALLBACK = _env("GEMINI_MODEL_FALLBACK", "gemini-3.5-flash")   # si el principal falla; "" = sin reserva
+GEMINI_TIMEOUT = float(_env("GEMINI_TIMEOUT", "30"))          # segundos por llamada
+GEMINI_CONCURRENCIA = int(_env("GEMINI_CONCURRENCIA", "3"))   # prendas analizadas a la vez
+GEMINI_IMG_LADO = int(_env("GEMINI_IMG_LADO", "768"))         # px del lado mayor que se envía a Gemini
 GEMINI_MODE = _env("GEMINI_MODE", "real")    # "real" | "fake" (demo sin API key)
 
 # "fashion-clip" (patrickjohncyh/fashion-clip) | "color-hist" (ligero, solo pruebas/demo)
