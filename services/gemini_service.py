@@ -225,41 +225,5 @@ class GeminiService:
         raise GeminiError(_mensaje(ultimo))
 
 
-class FakeGeminiService:
-    """Sustituto sin red para demo/tests."""
-
-    _PISTAS = [  # (palabras en el nombre del fichero, categoría, subcategoría, formalidad, t_min, t_max, peso)
-        (("camiseta", "tshirt", "top"), "Top", "Camiseta", 2, 16, 35, "Ligero"),
-        (("camisa", "shirt"), "Top", "Camisa", 4, 12, 30, "Ligero"),
-        (("jersey", "sudadera", "sweater"), "Top", "Jersey", 2, 4, 18, "Pesado"),
-        (("pantalon", "vaquero", "jean", "pants"), "Bottom", "Pantalón", 3, 5, 28, "Medio"),
-        (("falda", "skirt"), "Bottom", "Falda", 3, 14, 32, "Ligero"),
-        (("vestido", "dress"), "Dress", "Vestido", 4, 15, 34, "Ligero"),
-        (("chaqueta", "abrigo", "coat", "jacket"), "Outerwear", "Chaqueta", 3, -5, 17, "Pesado"),
-        (("zapat", "bota", "shoe", "sneaker", "zapatilla"), "Footwear", "Zapatillas", 2, -5, 35, "Medio"),
-        (("bolso", "gorro", "bufanda", "cinturon", "bag"), "Accessory", "Complemento", 3, -5, 35, "Ligero"),
-    ]
-
-    def analyze(self, image_path: str, retries: int = 1) -> dict:
-        from PIL import Image
-        nombre = norm(Path(image_path).stem)
-        pista = next((p for p in self._PISTAS if any(k in nombre for k in p[0])), self._PISTAS[0])
-        _, cat, sub, formal, tmin, tmax, peso = pista
-        with Image.open(image_path) as img:
-            r, g, b = img.convert("RGB").resize((1, 1)).getpixel((0, 0))
-
-        def distancia(hexa: str) -> int:
-            return sum((int(hexa[i:i + 2], 16) - c) ** 2 for i, c in zip((1, 3, 5), (r, g, b)))
-        color = min((c for c in COLORS if c != "Multicolor"), key=lambda c: distancia(COLORS[c]))
-        proteccion = ["Lluvia", "Viento"] if cat == "Outerwear" else []
-        return {"garment": {
-            "main_category": cat, "sub_category": sub,
-            "visuals": {"primary_color": color, "secondary_color": None, "pattern": "Liso",
-                        "fit_type": "Regular", "style_aesthetics": ["Casual"] if formal <= 3 else ["Smart Casual"]},
-            "context": {"formality_level": formal, "recommended_events": ["casual"] if formal <= 3 else ["trabajo"],
-                        "weather": {"temperature_min": tmin, "temperature_max": tmax,
-                                    "fabric_weight": peso, "protects_against": proteccion}}}}
-
-
 def get_gemini_service():
-    return FakeGeminiService() if config.GEMINI_MODE == "fake" else GeminiService()
+    return GeminiService()
